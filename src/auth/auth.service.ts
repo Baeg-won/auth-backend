@@ -62,7 +62,7 @@ export class AuthService {
   }
 
   async logout(req: any) {
-    const user = await this.userRepository.findByUserId(req.userId);
+    const user = await this.userRepository.findByUserId(req.user.userId);
 
     if (!user) {
       throw new UnauthorizedException();
@@ -78,7 +78,7 @@ export class AuthService {
   }
 
   async reissue(reissueRequestDto: ReissueRequestDto, req: any) {
-    const user = await this.userRepository.findByUserId(req.userId);
+    const user = await this.userRepository.findByUserId(req.user.userId);
 
     if (!user || reissueRequestDto.refreshToken != user.refreshToken) {
       throw new UnauthorizedException();
