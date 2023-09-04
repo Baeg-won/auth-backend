@@ -9,12 +9,12 @@ import { JwtAccessStrategy } from './jwt-access.strategy';
 
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }),
+    PassportModule.register({ defaultStrategy: 'jwt' }), // Passport 기본 전략 설정
     JwtModule,
-    UserModule
+    UserModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtAccessStrategy, JwtRefreshStrategy],
-  exports: [PassportModule, JwtAccessStrategy, JwtRefreshStrategy]
+  exports: [PassportModule, JwtAccessStrategy, JwtRefreshStrategy],
 })
 export class AuthModule {}

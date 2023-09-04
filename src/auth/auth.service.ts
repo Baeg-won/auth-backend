@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, Req, UnauthorizedException } from '@nestjs/common';
+import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthRequestDto } from './dto/auth-request.dto';
 import * as bcrypt from 'bcryptjs';
@@ -44,9 +44,11 @@ export class AuthService {
       );
     }
 
+    // Access Token, Refresh Token 생성
     const accessToken = await this.generateAccessToken(userId);
     const refreshToken = await this.generateRefreshToken(userId);
 
+    // Refresh Token 저장
     await this.userRepository.update(
       { userId: userId },
       { refreshToken: refreshToken },
@@ -60,7 +62,13 @@ export class AuthService {
   }
 
   async logout(req: any) {
-    // Access Token 검증
+    const user = await this.userRepository.findByUserId(req.userId);
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    // Refresh Token 삭제
     await this.userRepository.update(
       { userId: req.user.userId },
       { refreshToken: null },
@@ -70,21 +78,25 @@ export class AuthService {
   }
 
   async reissue(reissueRequestDto: ReissueRequestDto, req: any) {
+    const user = await this.userRepository.findByUserId(req.userId);
+
+    if (!user || reissueRequestDto.refreshToken != user.refreshToken) {
+      throw new UnauthorizedException();
+    }
+
     // Access Token 만료 확인
     if (Date.now() <= req.user.exp * 1000) {
-      console.log('not exp');
       return { accessToken: reissueRequestDto.accessToken };
     }
 
     // Access Token 재발급
-    console.log('reissue');
     return { accessToken: await this.generateAccessToken(req.user.userId) };
   }
 
   async generateAccessToken(userId: string): Promise<string> {
     const payload = { userId };
 
-    return this.jwtService.signAsync(payload, {
+    return await this.jwtService.signAsync(payload, {
       secret: this.configService.get<string>('JWT_ACCESS_SECRET'), // 토큰을 만들 때 사용할 Secret 텍스트
       expiresIn: this.configService.get<number>('JWT_ACCESS_EXPIRATION_TIME'), // 토큰 유효 시간
     });
@@ -93,7 +105,7 @@ export class AuthService {
   async generateRefreshToken(userId: string): Promise<string> {
     const payload = { userId };
 
-    return this.jwtService.signAsync(payload, {
+    return await this.jwtService.signAsync(payload, {
       secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       expiresIn: this.configService.get<number>('JWT_REFRESH_EXPIRATION_TIME'),
     });

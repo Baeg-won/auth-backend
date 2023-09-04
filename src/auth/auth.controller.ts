@@ -1,4 +1,11 @@
-import { Body, Controller, Post, Req, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpStatus,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthRequestDto } from './dto/auth-request.dto';
 import User from '../user/user.entity';
@@ -16,19 +23,27 @@ export class AuthController {
   }
 
   @Post('/auth/login')
-  async login(@Body() authRequestDto: AuthRequestDto): Promise<AuthResponseDto> {
+  async login(
+    @Body() authRequestDto: AuthRequestDto,
+  ): Promise<AuthResponseDto> {
     return await this.authService.login(authRequestDto);
   }
 
   @Post('/auth/logout')
   @UseGuards(AuthGuard('access'))
-  async logout(@Body() logoutRequest: { accessToken: string }, @Req() req: any) {
+  async logout(
+    @Body() logoutRequest: { accessToken: string },
+    @Req() req: any,
+  ): Promise<HttpStatus> {
     return await this.authService.logout(req);
   }
 
   @Post('/token/reissue')
   @UseGuards(AuthGuard('refresh'), AuthGuard('access'))
-  async reissue(@Body() reissueRequestDto: ReissueRequestDto, @Req() req: any) {
+  async reissue(
+    @Body() reissueRequestDto: ReissueRequestDto,
+    @Req() req: any,
+  ): Promise<{ accessToken: string }> {
     return await this.authService.reissue(reissueRequestDto, req);
   }
 }
