@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpStatus, Injectable, Req, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthRequestDto } from './dto/auth-request.dto';
 import * as bcrypt from 'bcryptjs';
@@ -59,55 +59,26 @@ export class AuthService {
     return res;
   }
 
-  async logout(logoutRequest: { accessToken: string }) {
-    const { accessToken } = logoutRequest;
-
+  async logout(req: any) {
     // Access Token 검증
-    const verifiedAccessToken = await this.jwtService.verify(accessToken, {
-      secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-      ignoreExpiration: true,
-    });
-
-    const user = await this.userRepository.findByUserId(
-      verifiedAccessToken.userId,
-    );
-
     await this.userRepository.update(
-      { userId: user.userId },
+      { userId: req.user.userId },
       { refreshToken: null },
     );
 
     return HttpStatus.OK;
   }
 
-  async reissue(reissueRequestDto: ReissueRequestDto) {
-    const { accessToken, refreshToken } = reissueRequestDto;
-
-    // Access Token 검증
-    const verifiedAccessToken = await this.jwtService.verify(accessToken, {
-      secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-      ignoreExpiration: true,
-    });
-
+  async reissue(reissueRequestDto: ReissueRequestDto, req: any) {
     // Access Token 만료 확인
-    if (Date.now() <= verifiedAccessToken.exp * 1000) {
-      return { accessToken: accessToken };
+    if (Date.now() <= req.user.exp * 1000) {
+      console.log('not exp');
+      return { accessToken: reissueRequestDto.accessToken };
     }
 
-    // Refresh Token 검증
-    const verifiedRefreshToken = await this.jwtService.verify(refreshToken, {
-      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-    });
-
-    const verifiedUser = await this.userRepository.findByUserId(
-      verifiedRefreshToken.userId,
-    );
-
-    if (refreshToken == verifiedUser.refreshToken) {
-      return {
-        accessToken: await this.generateAccessToken(verifiedUser.userId),
-      };
-    }
+    // Access Token 재발급
+    console.log('reissue');
+    return { accessToken: await this.generateAccessToken(req.user.userId) };
   }
 
   async generateAccessToken(userId: string): Promise<string> {

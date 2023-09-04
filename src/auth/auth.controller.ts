@@ -1,9 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Req, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthRequestDto } from './dto/auth-request.dto';
 import User from '../user/user.entity';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { ReissueRequestDto } from './dto/reissue-request.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('/api')
 export class AuthController {
@@ -20,12 +21,14 @@ export class AuthController {
   }
 
   @Post('/auth/logout')
-  async logout(@Body() logoutRequest: { accessToken: string }) {
-    return await this.authService.logout(logoutRequest);
+  @UseGuards(AuthGuard('access'))
+  async logout(@Body() logoutRequest: { accessToken: string }, @Req() req: any) {
+    return await this.authService.logout(req);
   }
 
   @Post('/token/reissue')
-  async reissue(@Body() reissueRequestDto: ReissueRequestDto) {
-    return await this.authService.reissue(reissueRequestDto);
+  @UseGuards(AuthGuard('refresh'), AuthGuard('access'))
+  async reissue(@Body() reissueRequestDto: ReissueRequestDto, @Req() req: any) {
+    return await this.authService.reissue(reissueRequestDto, req);
   }
 }
