@@ -6,15 +6,22 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtRefreshStrategy } from './jwt-refresh.strategy';
 import { JwtAccessStrategy } from './jwt-access.strategy';
+import { LocalStrategy } from './local.strategy';
 
 @Module({
-  imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }), // Passport 기본 전략 설정
-    JwtModule,
-    UserModule,
-  ],
+  imports: [PassportModule, JwtModule, UserModule],
   controllers: [AuthController],
-  providers: [AuthService, JwtAccessStrategy, JwtRefreshStrategy],
-  exports: [PassportModule, JwtAccessStrategy, JwtRefreshStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtAccessStrategy,
+    JwtRefreshStrategy,
+  ],
+  exports: [
+    PassportModule,
+    LocalStrategy,
+    JwtAccessStrategy,
+    JwtRefreshStrategy,
+  ],
 })
 export class AuthModule {}

@@ -23,18 +23,14 @@ export class AuthController {
   }
 
   @Post('/auth/login')
-  async login(
-    @Body() authRequestDto: AuthRequestDto,
-  ): Promise<AuthResponseDto> {
-    return await this.authService.login(authRequestDto);
+  @UseGuards(AuthGuard('local'))
+  async login(@Req() req: any): Promise<AuthResponseDto> {
+    return await this.authService.login(req);
   }
 
   @Post('/auth/logout')
   @UseGuards(AuthGuard('access'))
-  async logout(
-    @Body() logoutRequest: { accessToken: string },
-    @Req() req: any,
-  ): Promise<HttpStatus> {
+  async logout(@Req() req: any): Promise<HttpStatus> {
     return await this.authService.logout(req);
   }
 

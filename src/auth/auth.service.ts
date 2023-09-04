@@ -33,24 +33,14 @@ export class AuthService {
     return user;
   }
 
-  async login(authRequestDto: AuthRequestDto): Promise<AuthResponseDto> {
-    const { userId, userPassword } = authRequestDto;
-
-    const user = await this.userRepository.findByUserId(userId);
-
-    if (!user || !(await bcrypt.compare(userPassword, user.userPassword))) {
-      throw new UnauthorizedException(
-        '아이디 또는 비밀번호가 일치하지 않습니다.',
-      );
-    }
-
+  async login(req: any): Promise<AuthResponseDto> {
     // Access Token, Refresh Token 생성
-    const accessToken = await this.generateAccessToken(userId);
-    const refreshToken = await this.generateRefreshToken(userId);
+    const accessToken = await this.generateAccessToken(req.user.userId);
+    const refreshToken = await this.generateRefreshToken(req.user.userId);
 
     // Refresh Token 저장
     await this.userRepository.update(
-      { userId: userId },
+      { userId: req.user.userId },
       { refreshToken: refreshToken },
     );
 
@@ -61,7 +51,7 @@ export class AuthService {
     return res;
   }
 
-  async logout(req: any) {
+  async logout(req: any): Promise<HttpStatus> {
     const user = await this.userRepository.findByUserId(req.user.userId);
 
     if (!user) {
@@ -77,7 +67,10 @@ export class AuthService {
     return HttpStatus.OK;
   }
 
-  async reissue(reissueRequestDto: ReissueRequestDto, req: any) {
+  async reissue(
+    reissueRequestDto: ReissueRequestDto,
+    req: any,
+  ): Promise<{ accessToken: string }> {
     const user = await this.userRepository.findByUserId(req.user.userId);
 
     if (!user || reissueRequestDto.refreshToken != user.refreshToken) {
