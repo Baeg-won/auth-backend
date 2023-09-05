@@ -1,0 +1,33 @@
+@startuml
+
+actor Client
+participant Server
+database DB order 30
+
+autonumber
+Client -[#red]> Server: 토큰 재발급 요청(accessToken, refreshToken)
+
+note left
+<b>Request
+accessToken: string
+refreshToken: string
+end note
+
+note over Server
+Access Token, Refresh Token 검증
+end note
+
+Server -[#red]> DB: 사용자 정보 조회
+
+note over Server
+사용자 정보 검사 및 토큰 비교
+end note
+
+Server -[#blue]> Client: 토큰 재발급 응답(accessToken)
+
+note left
+<b>Response
+accessToken: string
+end note
+
+@enduml

@@ -35,7 +35,7 @@ export class AuthController {
   }
 
   @Post('/token/reissue')
-  @UseGuards(AuthGuard('refresh'), AuthGuard('access'))
+  @UseGuards(AuthGuard('access'))
   async reissue(
     @Body() reissueRequestDto: ReissueRequestDto,
     @Req() req: any,

@@ -24,43 +24,36 @@ export class AuthService {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(userPassword, salt);
 
-    const user = new User();
-    user.userId = userId;
-    user.userPassword = hashedPassword;
-
-    await this.userRepository.save(user);
-
-    return user;
+    return await this.userRepository.save(new User(userId, hashedPassword));
   }
 
   async login(req: any): Promise<AuthResponseDto> {
+    const userId = req.user.userId;
+
     // Access Token, Refresh Token 생성
-    const accessToken = await this.generateAccessToken(req.user.userId);
-    const refreshToken = await this.generateRefreshToken(req.user.userId);
+    const accessToken = await this.generateToken(userId, 'ACCESS');
+    const refreshToken = await this.generateToken(userId, 'REFRESH');
 
     // Refresh Token 저장
     await this.userRepository.update(
-      { userId: req.user.userId },
+      { userId: userId },
       { refreshToken: refreshToken },
     );
 
-    const res = new AuthResponseDto();
-    res.accessToken = accessToken;
-    res.refreshToken = refreshToken;
-
-    return res;
+    // 생성한 토큰 반환
+    return new AuthResponseDto(accessToken, refreshToken);
   }
 
   async logout(req: any): Promise<HttpStatus> {
     const user = await this.userRepository.findByUserId(req.user.userId);
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('User not found');
     }
 
     // Refresh Token 삭제
     await this.userRepository.update(
-      { userId: req.user.userId },
+      { userId: user.userId },
       { refreshToken: null },
     );
 
@@ -71,11 +64,7 @@ export class AuthService {
     reissueRequestDto: ReissueRequestDto,
     req: any,
   ): Promise<{ accessToken: string }> {
-    const user = await this.userRepository.findByUserId(req.user.userId);
-
-    if (!user || reissueRequestDto.refreshToken != user.refreshToken) {
-      throw new UnauthorizedException();
-    }
+    await this.validateRefreshToken(reissueRequestDto);
 
     // Access Token 만료 확인
     if (Date.now() <= req.user.exp * 1000) {
@@ -83,24 +72,36 @@ export class AuthService {
     }
 
     // Access Token 재발급
-    return { accessToken: await this.generateAccessToken(req.user.userId) };
+    return { accessToken: await this.generateToken(req.user.userId, 'ACCESS') };
   }
 
-  async generateAccessToken(userId: string): Promise<string> {
+  async generateToken(userId: string, tokenType: string): Promise<string> {
     const payload = { userId };
 
     return await this.jwtService.signAsync(payload, {
-      secret: this.configService.get<string>('JWT_ACCESS_SECRET'), // 토큰을 만들 때 사용할 Secret 텍스트
-      expiresIn: this.configService.get<number>('JWT_ACCESS_EXPIRATION_TIME'), // 토큰 유효 시간
+      secret: this.configService.get<string>(`JWT_${tokenType}_SECRET`), // 토큰을 만들 때 사용할 Secret 텍스트
+      expiresIn: this.configService.get<number>(`JWT_${tokenType}_EXPIRATION_TIME`), // 토큰 유효 시간
     });
   }
 
-  async generateRefreshToken(userId: string): Promise<string> {
-    const payload = { userId };
+  async validateRefreshToken(reissueRequestDto: ReissueRequestDto) {
+    try {
+      // Refresh Token 검증
+      const verifiedRefreshToken = this.jwtService.verify(
+        reissueRequestDto.refreshToken,
+        { secret: this.configService.get<string>(`JWT_REFRESH_SECRET`) },
+      );
 
-    return await this.jwtService.signAsync(payload, {
-      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-      expiresIn: this.configService.get<number>('JWT_REFRESH_EXPIRATION_TIME'),
-    });
+      const user = await this.userRepository.findByUserId(
+        verifiedRefreshToken.userId,
+      );
+
+      // Refresh Token 비교
+      if (!user || reissueRequestDto.refreshToken != user.refreshToken) {
+        return new UnauthorizedException('Invalid refresh-token');
+      }
+    } catch (err) {
+      throw new UnauthorizedException('Invalid refresh-token');
+    }
   }
 }

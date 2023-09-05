@@ -13,6 +13,11 @@ class User {
 
   @Column({ nullable: true })
   public refreshToken: string;
+
+  constructor(userId: string, userPassword: string) {
+    this.userId = userId;
+    this.userPassword = userPassword;
+  }
 }
 
 export default User;

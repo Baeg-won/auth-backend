@@ -1,0 +1,22 @@
+@startuml
+
+actor Client
+participant Server
+database DB order 30
+
+autonumber
+Client -[#red]> Server: 로그아웃 요청(accessToken)
+
+note left
+<b>Request
+accessToken: string
+end note
+
+note over Server
+Access Token 토큰 검증
+end note
+
+Server -[#red]> DB: Refresh Token 삭제
+Server -[#blue]> Client: 로그아웃 응답(HttpStatus.OK)
+
+@enduml

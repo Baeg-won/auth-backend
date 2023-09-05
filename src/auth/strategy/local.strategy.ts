@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserRepository } from '../user/user.repository';
+import { UserRepository } from '../../user/user.repository';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
@@ -21,9 +21,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     const user = await this.userRepository.findByUserId(userId);
 
     if (!user || !(await bcrypt.compare(userPassword, user.userPassword))) {
-      throw new UnauthorizedException(
-        '아이디 또는 비밀번호가 일치하지 않습니다.',
-      );
+      throw new UnauthorizedException('Invalid id or password');
     }
 
     return user;
