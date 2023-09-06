@@ -35,7 +35,19 @@
 
 ### 3. UML
 <details>
-  <summary>프로필 페이지</summary>
+  <summary>login</summary>
+
+  ![Account](https://github.com/Baeg-won/Baeg-won-Clothing-Gallery/assets/45421117/282acad4-a24f-4fe7-affd-6d0df6d6b954)
+</details>
+
+<details>
+  <summary>logout</summary>
+
+  ![Account](https://github.com/Baeg-won/Baeg-won-Clothing-Gallery/assets/45421117/282acad4-a24f-4fe7-affd-6d0df6d6b954)
+</details>
+
+<details>
+  <summary>reissue</summary>
 
   ![Account](https://github.com/Baeg-won/Baeg-won-Clothing-Gallery/assets/45421117/282acad4-a24f-4fe7-affd-6d0df6d6b954)
 </details>
