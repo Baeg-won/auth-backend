@@ -3,7 +3,6 @@
 ### 1. 프로젝트 개요
 - 프로젝트 명: JWT Authorization Server
 - 개발 인원: 1명(Baeg-won)
-- 개발 기간: 2023.09.01 ~ 2023.09.06
 - 주요 기능
   - 로그인
     - ID, Password 유효성 검사
