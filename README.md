@@ -35,13 +35,13 @@
 
 ### 3. UML
 - login
-![image](https://github.com/Baeg-won/auth-backend/assets/45421117/fb1b29d1-7d19-4749-96c8-e98e1759100e)
+![image](https://github.com/Baeg-won/auth-backend/assets/45421117/f83dc212-9e35-4323-9b62-3c9ef7e2c04e)
 
 - logout
-![image](https://github.com/Baeg-won/auth-backend/assets/45421117/6c159b6b-f353-4d61-8b22-4d14ca10c882)
+![image](https://github.com/Baeg-won/auth-backend/assets/45421117/78f97839-f3fb-4cb3-800b-2cc1343cff62)
 
 - reissue
-![image](https://github.com/Baeg-won/auth-backend/assets/45421117/5a822c8c-bae7-40a2-9310-6578c0c2af50)
+![image](https://github.com/Baeg-won/auth-backend/assets/45421117/db4ca608-a778-4ba2-9023-08508fde1076)
 
 <hr>
 
