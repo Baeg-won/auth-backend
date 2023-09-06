@@ -33,5 +33,17 @@
 
 <hr>
 
+### 3. UML
+- login
+![image](https://github.com/Baeg-won/auth-backend/assets/45421117/fb1b29d1-7d19-4749-96c8-e98e1759100e)
+
+- logout
+![image](https://github.com/Baeg-won/auth-backend/assets/45421117/6c159b6b-f353-4d61-8b22-4d14ca10c882)
+
+- reissue
+![image](https://github.com/Baeg-won/auth-backend/assets/45421117/5a822c8c-bae7-40a2-9310-6578c0c2af50)
+
+<hr>
+
 설계 문서:
 https://autumn-owl-e22.notion.site/64221463bbb94b5fa101f0d645fb0749?pvs=4
