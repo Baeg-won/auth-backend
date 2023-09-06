@@ -37,19 +37,19 @@
 <details>
   <summary>login</summary>
 
-  ![Account](https://github.com/Baeg-won/Baeg-won-Clothing-Gallery/assets/45421117/282acad4-a24f-4fe7-affd-6d0df6d6b954)
+  ![login](https://github.com/Baeg-won/auth-backend/assets/45421117/1236c1ea-73b6-4d0d-90b5-1dfb6a4bb0bb)
 </details>
 
 <details>
   <summary>logout</summary>
 
-  ![Account](https://github.com/Baeg-won/Baeg-won-Clothing-Gallery/assets/45421117/282acad4-a24f-4fe7-affd-6d0df6d6b954)
+  ![logout](https://github.com/Baeg-won/auth-backend/assets/45421117/8d11da84-1fa3-4e44-a13d-dfb804a3b971)
 </details>
 
 <details>
   <summary>reissue</summary>
 
-  ![Account](https://github.com/Baeg-won/Baeg-won-Clothing-Gallery/assets/45421117/282acad4-a24f-4fe7-affd-6d0df6d6b954)
+  ![reissue](https://github.com/Baeg-won/auth-backend/assets/45421117/98ff5aca-09b6-4030-ba33-d3cbca3ef5b9)
 </details>
 
 <hr>
