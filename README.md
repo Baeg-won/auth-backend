@@ -31,4 +31,7 @@
 - 로그아웃
   - 로그아웃 시 DB에 저장되었던 Refresh-token이 제거됨
 
+<hr>
+
+설계 문서(Tech spec, API 설계, 기능 명세서, Test case, 예외 처리)
 https://autumn-owl-e22.notion.site/64221463bbb94b5fa101f0d645fb0749?pvs=4
