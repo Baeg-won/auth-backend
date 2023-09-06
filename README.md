@@ -40,8 +40,11 @@ login
 logout
 ![image](https://github.com/Baeg-won/auth-backend/assets/45421117/78f97839-f3fb-4cb3-800b-2cc1343cff62)
 
-reissue
+<summary>reissue</summary>
+  
+<detail>
 ![reissue](https://github.com/Baeg-won/auth-backend/assets/45421117/a4fe6c9c-32bb-453c-8e15-f24bab47f1ef)
+</detail>
 
 <hr>
 
