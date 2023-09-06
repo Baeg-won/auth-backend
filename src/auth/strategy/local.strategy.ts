@@ -6,7 +6,7 @@ import { UserRepository } from '../../user/user.repository';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
-export class LocalStrategy extends PassportStrategy(Strategy) {
+export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
   constructor(
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,

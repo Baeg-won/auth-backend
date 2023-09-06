@@ -68,10 +68,9 @@ export class AuthService {
   ): Promise<{ accessToken: string }> {
     // Refresh Token 검증
     try {
-      await this.jwtService.verifyAsync(
-        reissueRequestDto.refreshToken,
-        { secret: this.configService.get<string>(`JWT_REFRESH_SECRET`) }
-      );
+      await this.jwtService.verifyAsync(reissueRequestDto.refreshToken, {
+        secret: this.configService.get<string>(`JWT_REFRESH_SECRET`),
+      });
     } catch (err) {
       throw new UnauthorizedException('Invalid refresh-token');
     }
@@ -81,7 +80,9 @@ export class AuthService {
 
     if (!user) {
       throw new UnauthorizedException('User not found');
-    } else if (!await bcrypt.compare(reissueRequestDto.refreshToken, user.refreshToken)) {
+    } else if (
+      !(await bcrypt.compare(reissueRequestDto.refreshToken, user.refreshToken))
+    ) {
       throw new UnauthorizedException('Invalid refresh-token');
     }
 
@@ -99,7 +100,9 @@ export class AuthService {
 
     return await this.jwtService.signAsync(payload, {
       secret: this.configService.get<string>(`JWT_${tokenType}_SECRET`), // 토큰을 만들 때 사용할 Secret 텍스트
-      expiresIn: this.configService.get<number>(`JWT_${tokenType}_EXPIRATION_TIME`), // 토큰 유효 시간
+      expiresIn: this.configService.get<number>(
+        `JWT_${tokenType}_EXPIRATION_TIME`,
+      ), // 토큰 유효 시간
     });
   }
 }
