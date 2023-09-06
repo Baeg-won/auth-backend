@@ -33,5 +33,5 @@
 
 <hr>
 
-설계 문서(Tech spec, API 설계, 기능 명세서, Test case, 예외 처리)
+설계 문서:
 https://autumn-owl-e22.notion.site/64221463bbb94b5fa101f0d645fb0749?pvs=4
