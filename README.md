@@ -34,16 +34,10 @@
 <hr>
 
 ### 3. UML
-login
-![image](https://github.com/Baeg-won/auth-backend/assets/45421117/f83dc212-9e35-4323-9b62-3c9ef7e2c04e)
-
-logout
-![image](https://github.com/Baeg-won/auth-backend/assets/45421117/78f97839-f3fb-4cb3-800b-2cc1343cff62)
-  
 <details>
-  <summary>
-    ![reissue](https://github.com/Baeg-won/auth-backend/assets/45421117/a4fe6c9c-32bb-453c-8e15-f24bab47f1ef)
-  </summary>
+  <summary>프로필 페이지</summary>
+
+  ![Account](https://github.com/Baeg-won/Baeg-won-Clothing-Gallery/assets/45421117/282acad4-a24f-4fe7-affd-6d0df6d6b954)
 </details>
 
 <hr>
