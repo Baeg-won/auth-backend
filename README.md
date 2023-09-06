@@ -30,3 +30,5 @@
   - 만약 Access-token이 만료되지 않았음에도 재발급 요청 시 기존 Access-token 그대로 반환
 - 로그아웃
   - 로그아웃 시 DB에 저장되었던 Refresh-token이 제거됨
+
+https://autumn-owl-e22.notion.site/64221463bbb94b5fa101f0d645fb0749?pvs=4
