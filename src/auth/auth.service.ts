@@ -21,8 +21,10 @@ export class AuthService {
   async register(authRequestDto: AuthRequestDto): Promise<User> {
     const { userId, userPassword } = authRequestDto;
 
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(userPassword, salt);
+    const hashedPassword = await bcrypt.hash(
+      userPassword,
+      await bcrypt.genSalt(),
+    );
 
     return await this.userRepository.save(new User(userId, hashedPassword));
   }
@@ -37,7 +39,7 @@ export class AuthService {
     // Refresh Token 저장
     await this.userRepository.update(
       { userId: userId },
-      { refreshToken: refreshToken },
+      { refreshToken: await bcrypt.hash(refreshToken, await bcrypt.genSalt()) },
     );
 
     // 생성한 토큰 반환
@@ -64,7 +66,24 @@ export class AuthService {
     reissueRequestDto: ReissueRequestDto,
     req: any,
   ): Promise<{ accessToken: string }> {
-    await this.validateRefreshToken(reissueRequestDto);
+    // Refresh Token 검증
+    try {
+      await this.jwtService.verifyAsync(
+        reissueRequestDto.refreshToken,
+        { secret: this.configService.get<string>(`JWT_REFRESH_SECRET`) }
+      );
+    } catch (err) {
+      throw new UnauthorizedException('Invalid refresh-token');
+    }
+
+    // 사용자 정보 확인(DB에 실제 저장되어 있는가?) 및 Refresh Token 비교
+    const user = await this.userRepository.findByUserId(req.user.userId);
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    } else if (!await bcrypt.compare(reissueRequestDto.refreshToken, user.refreshToken)) {
+      throw new UnauthorizedException('Invalid refresh-token');
+    }
 
     // Access Token 만료 확인
     if (Date.now() <= req.user.exp * 1000) {
@@ -82,26 +101,5 @@ export class AuthService {
       secret: this.configService.get<string>(`JWT_${tokenType}_SECRET`), // 토큰을 만들 때 사용할 Secret 텍스트
       expiresIn: this.configService.get<number>(`JWT_${tokenType}_EXPIRATION_TIME`), // 토큰 유효 시간
     });
-  }
-
-  async validateRefreshToken(reissueRequestDto: ReissueRequestDto) {
-    try {
-      // Refresh Token 검증
-      const verifiedRefreshToken = this.jwtService.verify(
-        reissueRequestDto.refreshToken,
-        { secret: this.configService.get<string>(`JWT_REFRESH_SECRET`) },
-      );
-
-      const user = await this.userRepository.findByUserId(
-        verifiedRefreshToken.userId,
-      );
-
-      // Refresh Token 비교
-      if (!user || reissueRequestDto.refreshToken != user.refreshToken) {
-        return new UnauthorizedException('Invalid refresh-token');
-      }
-    } catch (err) {
-      throw new UnauthorizedException('Invalid refresh-token');
-    }
   }
 }

@@ -12,6 +12,7 @@ import User from '../user/user.entity';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { ReissueRequestDto } from './dto/reissue-request.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { JwtGuard } from './guard/jwt.guard';
 
 @Controller('/api')
 export class AuthController {
@@ -29,13 +30,13 @@ export class AuthController {
   }
 
   @Post('/auth/logout')
-  @UseGuards(AuthGuard('access'))
+  @UseGuards(JwtGuard)
   async logout(@Req() req: any): Promise<HttpStatus> {
     return await this.authService.logout(req);
   }
 
   @Post('/token/reissue')
-  @UseGuards(AuthGuard('access'))
+  @UseGuards(JwtGuard)
   async reissue(
     @Body() reissueRequestDto: ReissueRequestDto,
     @Req() req: any,
